@@ -1,574 +1,484 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F1-F4 Keyboard Event Dispatcher</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FM Tuner Controller</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f9f9f9;
-            padding: 20px;
-        }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #F8F9FA;
+      color: #212529;
+      padding: 20px;
+    }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 350px 1fr 1fr;
-            gap: 20px;
-        }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
 
-        .control-panel {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            height: fit-content;
-            position: sticky;
-            top: 20px;
-        }
+    .header {
+      margin-bottom: 24px;
+    }
 
-        .section-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #0052cc;
-            border-bottom: 2px solid #0052cc;
-            padding-bottom: 8px;
-        }
+    .header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #212529;
+    }
 
-        .button-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
+    .header p {
+      font-size: 14px;
+      color: #6C757D;
+    }
 
-        .key-button {
-            background: linear-gradient(135deg, #0052cc 0%, #003d99 100%);
-            color: white;
-            border: none;
-            padding: 16px;
-            border-radius: 8px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+    .panel {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
 
-        .key-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 82, 204, 0.3);
-        }
+    .panel-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #212529;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        .key-button:active {
-            transform: translateY(0);
-            background: linear-gradient(135deg, #003d99 0%, #002966 100%);
-        }
+    .config-field {
+      margin-bottom: 16px;
+    }
 
-        .input-section {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+    .config-field:last-child {
+      margin-bottom: 0;
+    }
 
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
+    .config-field label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: #495057;
+      margin-bottom: 6px;
+    }
 
-        .input-group label {
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: #333;
-        }
+    .config-field input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #DEE2E6;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: border-color 0.3s;
+    }
 
-        .input-group input {
-            padding: 8px 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            font-family: monospace;
-        }
+    .config-field input:focus {
+      outline: none;
+      border-color: #007BFF;
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
 
-        .input-group input:focus {
-            outline: none;
-            border-color: #0052cc;
-            box-shadow: 0 0 4px rgba(0, 82, 204, 0.3);
-        }
+    .button-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
 
-        .load-button {
-            background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-        }
+    .button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      flex: 1;
+      min-width: 100px;
+    }
 
-        .load-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
-        }
+    .button-primary {
+      background-color: #007BFF;
+      color: white;
+    }
 
-        .status-box {
-            background: #f0f7ff;
-            border-left: 4px solid #0052cc;
-            padding: 12px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            line-height: 1.4;
-        }
+    .button-primary:hover {
+      background-color: #0056B3;
+      box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+    }
 
-        .status-box.loading {
-            background: #fff3cd;
-            border-left-color: #ff9800;
-        }
+    .button-primary:active {
+      transform: scale(0.98);
+    }
 
-        .status-box.error {
-            background: #ffebee;
-            border-left-color: #f44336;
-        }
+    .button-secondary {
+      background-color: #6C757D;
+      color: white;
+    }
 
-        .status-box.success {
-            background: #e8f5e9;
-            border-left-color: #4caf50;
-        }
+    .button-secondary:hover {
+      background-color: #5A6268;
+      box-shadow: 0 2px 8px rgba(108, 117, 125, 0.2);
+    }
 
-        .status-box.warning {
-            background: #fff3cd;
-            border-left-color: #ff9800;
-        }
+    .button-success {
+      background-color: #28A745;
+      color: white;
+    }
 
-        .focus-indicator {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            padding: 10px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            margin-top: 10px;
-        }
+    .button-success:hover {
+      background-color: #218838;
+      box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+    }
 
-        .focus-indicator.focused {
-            background: #c8e6c9;
-            border-left-color: #4caf50;
-        }
+    .button-success:active {
+      transform: scale(0.98);
+    }
 
-        .iframe-container {
-            background: white;
-            border-radius: 8px;
-            padding: 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+    .control-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
 
-        .iframe-label {
-            font-size: 0.9rem;
-            color: #666;
-            font-weight: 600;
-        }
+    .control-buttons .button {
+      flex: none;
+    }
 
-        #targetIframe {
-            width: 100%;
-            height: 600px;
-            border: 3px solid #ddd;
-            border-radius: 4px;
-            transition: border-color 0.3s ease;
-        }
+    .button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
-        #targetIframe.focused {
-            border-color: #4caf50;
-            box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
-        }
+    .button:disabled:hover {
+      background-color: inherit;
+      box-shadow: none;
+    }
 
-        .console-panel {
-            background: white;
-            border-radius: 8px;
-            padding: 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+    .status {
+      font-size: 12px;
+      padding: 8px 12px;
+      border-radius: 4px;
+      margin-top: 12px;
+      display: none;
+    }
 
-        .console-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    .status-success {
+      background-color: #D4EDDA;
+      color: #155724;
+      border: 1px solid #C3E6CB;
+    }
 
-        .console-header .title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #0052cc;
-        }
+    .status-error {
+      background-color: #F8D7DA;
+      color: #721C24;
+      border: 1px solid #F5C6CB;
+    }
 
-        .clear-button {
-            background: #ff6700;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: background 0.2s ease;
-        }
+    .status-info {
+      background-color: #D1ECF1;
+      color: #0C5460;
+      border: 1px solid #BEE5EB;
+    }
 
-        .clear-button:hover {
-            background: #e55a00;
-        }
+    #iframeContainer {
+      width: 100%;
+      height: 0;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: height 0.3s;
+    }
 
-        #consoleOutput {
-            background: #1e1e1e;
-            color: #0ff;
-            padding: 12px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.8rem;
-            height: 600px;
-            overflow-y: auto;
-            line-height: 1.4;
-            border: 1px solid #333;
-        }
+    #iframeContainer.loaded {
+      height: 600px;
+    }
 
-        .log-entry {
-            margin-bottom: 6px;
-            word-break: break-word;
-        }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
 
-        .log-info {
-            color: #0ff;
-        }
+    .debug-console {
+      background-color: #1E1E1E;
+      color: #00FF00;
+      padding: 16px;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      max-height: 300px;
+      overflow-y: auto;
+      line-height: 1.5;
+    }
 
-        .log-error {
-            color: #ff4444;
-        }
+    .debug-console-line {
+      margin: 4px 0;
+      padding: 2px 0;
+    }
 
-        .log-success {
-            color: #44ff44;
-        }
+    .debug-console-line.error {
+      color: #FF6B6B;
+    }
 
-        .log-warning {
-            color: #ffaa00;
-        }
+    .debug-console-line.success {
+      color: #51CF66;
+    }
 
-        .log-dispatch {
-            color: #ffaa00;
-        }
+    .debug-console-line.info {
+      color: #74C0FC;
+    }
 
-        .timestamp {
-            color: #888;
-            font-size: 0.75em;
-        }
+    .debug-console-line.warning {
+      color: #FFD93D;
+    }
 
-        @media (max-width: 1200px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
+    .clear-console-btn {
+      margin-top: 12px;
+      width: 100%;
+    }
 
-            .control-panel {
-                position: static;
-            }
-        }
-    </style>
+    .emoji {
+      margin-right: 4px;
+    }
+
+    .info-text {
+      font-size: 13px;
+      color: #6C757D;
+      margin-bottom: 16px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Control Panel -->
-        <div class="control-panel">
-            <div>
-                <div class="section-title">⌨️ Controls</div>
-                <div class="button-grid">
-                    <button class="key-button" data-key="F1">F1</button>
-                    <button class="key-button" data-key="F2">F2</button>
-                    <button class="key-button" data-key="F3">F3</button>
-                    <button class="key-button" data-key="F4">F4</button>
-                </div>
-            </div>
-
-            <div class="input-section">
-                <div class="section-title">⚙️ Config</div>
-                <div class="input-group">
-                    <label for="iframeUrl">Iframe URL:</label>
-                    <input 
-                        type="text" 
-                        id="iframeUrl" 
-                        placeholder="https://..."
-                        value="https://comebackfm.fmtuner.org/"
-                    >
-                </div>
-                <button class="load-button" id="loadIframeButton">
-                    Load Iframe
-                </button>
-            </div>
-
-            <div id="statusBox" class="status-box success">
-                <strong>Status:</strong> Ready
-            </div>
-
-            <div class="focus-indicator" id="focusIndicator">
-                🔴 Iframe NOT focused
-            </div>
-
-            <div class="input-section">
-                <div class="section-title">🎯 Action</div>
-                <button class="load-button" id="focusIframeButton" style="background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);">
-                    Focus Iframe
-                </button>
-            </div>
-        </div>
-
-        <!-- Iframe Container -->
-        <div class="iframe-container">
-            <div class="iframe-label">📺 Target Iframe (FM-Tuner)</div>
-            <iframe 
-                id="targetIframe" 
-                src="https://comebackfm.fmtuner.org/"
-                title="Target webpage"
-                sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
-            ></iframe>
-        </div>
-
-        <!-- Console Panel -->
-        <div class="console-panel">
-            <div class="console-header">
-                <span class="title">📋 Debug Console</span>
-                <button class="clear-button">Clear</button>
-            </div>
-            <div id="consoleOutput"></div>
-        </div>
+  <div class="container">
+    <div class="header">
+      <h1>🎙️ FM Tuner Controller</h1>
+      <p>Control the FM tuner across origins using postMessage API</p>
     </div>
 
-    <script>
-        // Console Logger
-        class ConsoleLogger {
-            constructor(outputElementId) {
-                this.outputElement = document.getElementById(outputElementId);
-                this.logs = [];
-            }
+    <!-- Config Panel -->
+    <div class="panel">
+      <div class="panel-title">
+        <span class="emoji">⚙️</span>Configuration
+      </div>
+      <div class="config-field">
+        <label for="iframeUrl">Iframe URL:</label>
+        <input 
+          type="text" 
+          id="iframeUrl" 
+          value="https://comebackfm.fmtuner.org/" 
+          placeholder="Enter FM tuner URL"
+        >
+      </div>
+      <div class="button-group">
+        <button class="button button-primary" onclick="loadIframe()">Load Iframe</button>
+        <button class="button button-secondary" id="focusBtn" onclick="focusIframe()" disabled>Focus Iframe</button>
+      </div>
+      <div id="configStatus" class="status"></div>
+    </div>
 
-            log(message, type = 'info') {
-                const timestamp = new Date().toLocaleTimeString('nl-NL', { hour12: false });
-                const logEntry = { message, type, timestamp };
-                this.logs.push(logEntry);
-                this.render();
-                console.log(`[${type.toUpperCase()}] ${message}`);
-            }
+    <!-- Controls Panel -->
+    <div class="panel">
+      <div class="panel-title">
+        <span class="emoji">🎚️</span>Keyboard Controls
+      </div>
+      <p class="info-text">
+        Click buttons or press keys to simulate F1-F4 keypresses on the FM tuner
+      </p>
+      <div class="control-buttons">
+        <button class="button button-success" onclick="dispatchKey(112, 'F1')">F1</button>
+        <button class="button button-success" onclick="dispatchKey(113, 'F2')">F2</button>
+        <button class="button button-success" onclick="dispatchKey(114, 'F3')">F3</button>
+        <button class="button button-success" onclick="dispatchKey(115, 'F4')">F4</button>
+      </div>
+      <div id="controlStatus" class="status"></div>
+    </div>
 
-            info(message) { this.log(message, 'info'); }
-            error(message) { this.log(message, 'error'); }
-            success(message) { this.log(message, 'success'); }
-            warning(message) { this.log(message, 'warning'); }
-            dispatch(message) { this.log(message, 'dispatch'); }
+    <!-- Iframe Container -->
+    <div class="panel">
+      <div class="panel-title">
+        <span class="emoji">📺</span>Target Iframe (FM-Tuner)
+      </div>
+      <div id="iframeContainer"></div>
+    </div>
 
-            clear() {
-                this.logs = [];
-                this.render();
-            }
+    <!-- Debug Console -->
+    <div class="panel">
+      <div class="panel-title">
+        <span class="emoji">🔍</span>Debug Console
+      </div>
+      <div class="debug-console" id="debugConsole"></div>
+      <button class="button button-secondary clear-console-btn" onclick="clearConsole()">Clear Console</button>
+    </div>
+  </div>
 
-            render() {
-                this.outputElement.innerHTML = this.logs
-                    .map(log => {
-                        const classList = `log-entry log-${log.type}`;
-                        return `<div class="${classList}"><span class="timestamp">[${log.timestamp}]</span> ${this.escapeHtml(log.message)}</div>`;
-                    })
-                    .join('');
-                this.outputElement.scrollTop = this.outputElement.scrollHeight;
-            }
+  <script>
+    let iframeElement = null;
+    let iframeLoaded = false;
 
-            escapeHtml(text) {
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
-        }
+    function getTimestamp() {
+      return new Date().toLocaleTimeString();
+    }
 
-        // Initialize
-        const logger = new ConsoleLogger('consoleOutput');
-        const keyButtons = document.querySelectorAll('.key-button[data-key]');
-        const targetIframe = document.getElementById('targetIframe');
-        const clearButton = document.querySelector('.clear-button');
-        const loadIframeButton = document.getElementById('loadIframeButton');
-        const focusIframeButton = document.getElementById('focusIframeButton');
-        const iframeUrlInput = document.getElementById('iframeUrl');
-        const statusBox = document.getElementById('statusBox');
-        const focusIndicator = document.getElementById('focusIndicator');
+    function log(message, type = 'info') {
+      const debugConsoleElement = document.getElementById('debugConsole');
+      const line = document.createElement('div');
+      line.className = `debug-console-line ${type}`;
+      
+      const timestamp = getTimestamp();
+      let emoji = '📝';
+      if (type === 'error') emoji = '❌';
+      else if (type === 'success') emoji = '✅';
+      else if (type === 'warning') emoji = '⚠️';
+      else if (type === 'info') emoji = 'ℹ️';
+      
+      line.textContent = `[${timestamp}] ${emoji} ${message}`;
+      debugConsoleElement.appendChild(line);
+      debugConsoleElement.scrollTop = debugConsoleElement.scrollHeight;
+      
+      // Log to browser console
+      if (type === 'error') {
+        window.console.error(`[${type.toUpperCase()}] ${message}`);
+      } else {
+        window.console.log(`[${type.toUpperCase()}] ${message}`);
+      }
+    }
 
-        let iframeIsFocused = false;
+    function clearConsole() {
+      document.getElementById('debugConsole').innerHTML = '';
+      log('Console cleared - Ready for new events', 'info');
+    }
 
-        logger.info('✅ Keyboard Event Dispatcher initialized');
-        logger.info('🎯 Ready to dispatch KeyboardEvent objects');
+    function showStatus(elementId, message, type = 'info') {
+      const element = document.getElementById(elementId);
+      element.className = `status status-${type}`;
+      element.textContent = message;
+      element.style.display = 'block';
+      setTimeout(() => {
+        element.style.display = 'none';
+      }, 4000);
+    }
 
-        // Helper function to update status
-        function updateStatus(message, type = 'info') {
-            statusBox.textContent = '🔹 ' + message;
-            statusBox.className = 'status-box ' + type;
-        }
+    function loadIframe() {
+      const url = document.getElementById('iframeUrl').value.trim();
+      
+      if (!url) {
+        log('Error: Please enter a valid URL', 'error');
+        showStatus('configStatus', '❌ Please enter a valid URL', 'error');
+        return;
+      }
 
-        // Helper function to update focus indicator
-        function updateFocusIndicator() {
-            if (iframeIsFocused) {
-                focusIndicator.textContent = '🟢 Iframe FOCUSED - Ready to dispatch events';
-                focusIndicator.classList.add('focused');
-            } else {
-                focusIndicator.textContent = '🔴 Iframe NOT focused - Click "Focus Iframe" first';
-                focusIndicator.classList.remove('focused');
-            }
-        }
+      const container = document.getElementById('iframeContainer');
+      container.innerHTML = '';
+      
+      iframeElement = document.createElement('iframe');
+      iframeElement.src = url;
+      
+      try {
+        iframeElement.sandbox.add('allow-same-origin', 'allow-scripts', 'allow-forms', 'allow-popups');
+      } catch (e) {
+        // Sandbox attribute might not support add method in some browsers
+        iframeElement.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-forms allow-popups');
+      }
+      
+      iframeElement.onload = function() {
+        iframeLoaded = true;
+        document.getElementById('focusBtn').disabled = false;
+        log(`Iframe loaded from: ${url}`, 'success');
+        showStatus('configStatus', '✅ Iframe loaded successfully', 'success');
+        container.classList.add('loaded');
+      };
 
-        // Load iframe
-        loadIframeButton.addEventListener('click', () => {
-            const url = iframeUrlInput.value.trim();
-            if (!url) {
-                logger.error('❌ Please enter a valid URL');
-                updateStatus('Error: No URL provided', 'error');
-                return;
-            }
-            try {
-                new URL(url);
-                targetIframe.src = url;
-                iframeIsFocused = false;
-                updateFocusIndicator();
-                updateStatus('Loading iframe...', 'loading');
-                logger.info(`📺 Loading iframe from: ${url}`);
-                
-                setTimeout(() => {
-                    updateStatus('Iframe loaded - Click "Focus Iframe" to start', 'success');
-                    logger.success(`✅ Iframe loaded. Now focus it to dispatch events.`);
-                }, 1500);
-            } catch (e) {
-                logger.error(`❌ Invalid URL: ${e.message}`);
-                updateStatus('Error: Invalid URL', 'error');
-            }
-        });
+      iframeElement.onerror = function() {
+        log(`Error loading iframe from: ${url}`, 'error');
+        showStatus('configStatus', '❌ Failed to load iframe', 'error');
+      };
 
-        // Focus iframe button
-        focusIframeButton.addEventListener('click', () => {
-            try {
-                targetIframe.focus();
-                iframeIsFocused = true;
-                updateFocusIndicator();
-                updateStatus('✅ Iframe focused', 'success');
-                logger.success(`🎯 Iframe focused! Ready to dispatch keyboard events`);
-                targetIframe.classList.add('focused');
-            } catch (e) {
-                logger.error(`❌ Could not focus iframe: ${e.message}`);
-                updateStatus('Error: Could not focus', 'error');
-            }
-        });
+      container.appendChild(iframeElement);
+      log(`Loading iframe from: ${url}`, 'info');
+    }
 
-        // Dispatch keyboard event
-        function dispatchKeyboardEvent(key) {
-            if (!iframeIsFocused) {
-                logger.warning(`⚠️  Iframe is not focused! Click "Focus Iframe" first`);
-                updateStatus('Error: Iframe not focused', 'warning');
-                return;
-            }
+    function focusIframe() {
+      if (!iframeLoaded || !iframeElement) {
+        log('Iframe not loaded yet', 'error');
+        showStatus('configStatus', '❌ Iframe not loaded', 'error');
+        return;
+      }
 
-            const keyCode = 111 + parseInt(key.slice(1));
-            
-            try {
-                logger.dispatch(`⬆️ DISPATCHING [${key}] on iframe.contentDocument`);
+      try {
+        iframeElement.focus();
+        log('Iframe focused', 'success');
+        showStatus('controlStatus', '✅ Iframe focused', 'success');
+      } catch (error) {
+        log(`Error focusing iframe: ${error.message}`, 'error');
+        showStatus('controlStatus', '❌ Failed to focus iframe', 'error');
+      }
+    }
 
-                // Create KeyboardEvent
-                const keydownEvent = new KeyboardEvent('keydown', {
-                    key: key,
-                    code: key,
-                    keyCode: keyCode,
-                    which: keyCode,
-                    bubbles: true,
-                    cancelable: true,
-                    view: targetIframe.contentWindow
-                });
+    function dispatchKey(keyCode, keyName) {
+      if (!iframeLoaded || !iframeElement) {
+        log(`Cannot dispatch ${keyName}: Iframe not loaded`, 'error');
+        showStatus('controlStatus', '❌ Iframe not loaded', 'error');
+        return;
+      }
 
-                logger.info(`   Event created: ${key} (keyCode: ${keyCode})`);
-                logger.info(`   Bubbles: true, Cancelable: true`);
+      try {
+        log(`⬆️ DISPATCHING [${keyName}] to iframe via postMessage`, 'info');
+        log(`Event: keyCode=${keyCode}, keyName="${keyName}"`, 'info');
 
-                // Dispatch on iframe's document
-                const dispatched = targetIframe.contentDocument.dispatchEvent(keydownEvent);
-                
-                if (dispatched) {
-                    logger.success(`   ✓ Event dispatched successfully!`);
-                    updateStatus(`✅ Dispatched ${key}`, 'success');
-                } else {
-                    logger.warning(`   ⚠️  Event was cancelled by target`);
-                    updateStatus(`⚠️  Event cancelled`, 'warning');
-                }
+        iframeElement.contentWindow.postMessage(
+          {
+            type: 'simulateKeyPress',
+            keyCode: keyCode,
+            keyName: keyName,
+            key: keyName,
+            bubbles: true,
+            cancelable: true
+          },
+          '*'
+        );
 
-                // Also dispatch keyup
-                const keyupEvent = new KeyboardEvent('keyup', {
-                    key: key,
-                    code: key,
-                    keyCode: keyCode,
-                    which: keyCode,
-                    bubbles: true,
-                    cancelable: true,
-                    view: targetIframe.contentWindow
-                });
+        log(`${keyName} event dispatched successfully`, 'success');
+        showStatus('controlStatus', `✅ ${keyName} dispatched`, 'success');
+      } catch (error) {
+        log(`Error dispatching ${keyName}: ${error.message}`, 'error');
+        showStatus('controlStatus', `❌ Error dispatching ${keyName}`, 'error');
+      }
+    }
 
-                targetIframe.contentDocument.dispatchEvent(keyupEvent);
-                logger.info(`   ✓ keyup event also dispatched`);
+    window.addEventListener('message', function(event) {
+      if (event.data.type === 'iframeLog') {
+        log(`[IFRAME] ${event.data.message}`, 'info');
+      } else if (event.data.type === 'iframeError') {
+        log(`[IFRAME ERROR] ${event.data.message}`, 'error');
+      }
+    });
 
-            } catch (e) {
-                logger.error(`❌ Error dispatching event: ${e.message}`);
-                logger.error(`   Stack: ${e.stack}`);
-                updateStatus('Error: Could not dispatch', 'error');
-            }
-        }
+    document.addEventListener('keydown', function(event) {
+      const keyMap = {
+        'F1': function() { dispatchKey(112, 'F1'); },
+        'F2': function() { dispatchKey(113, 'F2'); },
+        'F3': function() { dispatchKey(114, 'F3'); },
+        'F4': function() { dispatchKey(115, 'F4'); }
+      };
 
-        // Button click handlers
-        keyButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const key = button.dataset.key;
-                button.style.transform = 'scale(0.95)';
-                dispatchKeyboardEvent(key);
-                setTimeout(() => { button.style.transform = ''; }, 100);
-            });
-        });
+      if (keyMap[event.key]) {
+        event.preventDefault();
+        keyMap[event.key]();
+      }
+    });
 
-        // Keyboard shortcuts (F1-F4)
-        document.addEventListener('keydown', (e) => {
-            if (e.key.startsWith('F') && e.key.length === 2) {
-                const keyNum = parseInt(e.key.slice(1));
-                if (keyNum >= 1 && keyNum <= 4) {
-                    // Don't prevent default - let browser handle F keys naturally
-                    const button = document.querySelector(`[data-key="${e.key}"]`);
-                    if (button) {
-                        logger.warning(`🔑 Physical ${e.key} key pressed on main document`);
-                        logger.info(`   Note: This won't reach iframe. Click button or focus iframe first.`);
-                    }
-                }
-            }
-        });
-
-        // Clear console
-        clearButton.addEventListener('click', () => {
-            logger.clear();
-            updateStatus('Console cleared', 'info');
-            logger.info('📋 Console cleared - Ready for new events');
-        });
-
-        // Initial status
-        updateStatus('Ready - Load iframe first', 'success');
-        updateFocusIndicator();
-        logger.success('🚀 System ready');
-        logger.info('📖 Workflow: Load Iframe → Focus Iframe → Send F1-F4');
-    </script>
+    log('FM Tuner Controller initialized', 'success');
+    log('Enter iframe URL and click "Load Iframe" to start', 'info');
+  </script>
 </body>
 </html>
