@@ -12,109 +12,99 @@
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #F8F9FA;
-      color: #212529;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding: 20px;
     }
 
     .container {
-      max-width: 720px;
-      margin: 0 auto;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      padding: 32px;
     }
 
     .header {
-      margin-bottom: 24px;
+      text-align: center;
+      margin-bottom: 32px;
     }
 
     .header h1 {
-      font-size: 24px;
-      font-weight: 600;
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a1a1a;
       margin-bottom: 8px;
-      color: #212529;
     }
 
     .header p {
       font-size: 14px;
-      color: #6C757D;
+      color: #666;
     }
 
-    .panel {
-      background: white;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    .section {
+      margin-bottom: 28px;
     }
 
-    .panel-title {
-      font-size: 16px;
+    .section-title {
+      font-size: 12px;
       font-weight: 600;
-      color: #212529;
-      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #999;
+      margin-bottom: 12px;
+    }
+
+    .input-group {
       display: flex;
-      align-items: center;
       gap: 8px;
+      margin-bottom: 12px;
     }
 
-    .config-field {
-      margin-bottom: 16px;
-    }
-
-    .config-field:last-child {
-      margin-bottom: 0;
-    }
-
-    .config-field label {
-      display: block;
+    input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
       font-size: 14px;
-      font-weight: 500;
-      color: #495057;
-      margin-bottom: 6px;
+      font-family: inherit;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
 
-    .config-field input {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #DEE2E6;
-      border-radius: 6px;
-      font-size: 14px;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      transition: border-color 0.3s;
-    }
-
-    .config-field input:focus {
+    input:focus {
       outline: none;
-      border-color: #007BFF;
-      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-    }
-
-    .button-group {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
+      border-color: #2563EB;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 
     .button {
-      padding: 10px 16px;
+      padding: 12px 20px;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 14px;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
       transition: all 0.3s;
-      flex: 1;
-      min-width: 100px;
+      font-family: inherit;
     }
 
     .button-primary {
-      background-color: #007BFF;
+      background: #2563EB;
       color: white;
+      flex: 1;
     }
 
     .button-primary:hover {
-      background-color: #0056B3;
-      box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+      background: #1d4ed8;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
     }
 
     .button-primary:active {
@@ -122,85 +112,56 @@
     }
 
     .button-secondary {
-      background-color: #6C757D;
-      color: white;
+      background: #f0f0f0;
+      color: #333;
+      flex: 1;
     }
 
     .button-secondary:hover {
-      background-color: #5A6268;
-      box-shadow: 0 2px 8px rgba(108, 117, 125, 0.2);
+      background: #e0e0e0;
     }
 
-    .button-success {
-      background-color: #28A745;
+    .button-secondary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .button-secondary:disabled:hover {
+      background: #f0f0f0;
+    }
+
+    .button-control {
+      background: #10B981;
       color: white;
+      padding: 16px 20px;
     }
 
-    .button-success:hover {
-      background-color: #218838;
-      box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+    .button-control:hover {
+      background: #059669;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
     }
 
-    .button-success:active {
+    .button-control:active {
       transform: scale(0.98);
     }
 
-    .control-buttons {
+    .control-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 12px;
     }
 
-    .control-buttons .button {
-      flex: none;
-    }
-
-    .button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .button:disabled:hover {
-      background-color: inherit;
-      box-shadow: none;
-    }
-
-    .status {
-      font-size: 12px;
-      padding: 8px 12px;
-      border-radius: 4px;
-      margin-top: 12px;
-      display: none;
-    }
-
-    .status-success {
-      background-color: #D4EDDA;
-      color: #155724;
-      border: 1px solid #C3E6CB;
-    }
-
-    .status-error {
-      background-color: #F8D7DA;
-      color: #721C24;
-      border: 1px solid #F5C6CB;
-    }
-
-    .status-info {
-      background-color: #D1ECF1;
-      color: #0C5460;
-      border: 1px solid #BEE5EB;
-    }
-
-    #iframeContainer {
+    .iframe-wrapper {
       width: 100%;
       height: 0;
       border-radius: 8px;
       overflow: hidden;
       transition: height 0.3s;
+      margin-bottom: 28px;
     }
 
-    #iframeContainer.loaded {
-      height: 600px;
+    .iframe-wrapper.loaded {
+      height: 500px;
     }
 
     iframe {
@@ -209,171 +170,110 @@
       border: none;
     }
 
-    .debug-console {
-      background-color: #1E1E1E;
-      color: #00FF00;
-      padding: 16px;
-      border-radius: 6px;
-      font-family: 'Courier New', monospace;
-      font-size: 12px;
-      max-height: 300px;
-      overflow-y: auto;
-      line-height: 1.5;
+    .status {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 14px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 1000;
     }
 
-    .debug-console-line {
-      margin: 4px 0;
-      padding: 2px 0;
+    .status.show {
+      opacity: 1;
+      pointer-events: auto;
     }
 
-    .debug-console-line.error {
-      color: #FF6B6B;
+    .status-success {
+      background: #10B981;
+      color: white;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
     }
 
-    .debug-console-line.success {
-      color: #51CF66;
+    .status-error {
+      background: #EF4444;
+      color: white;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
     }
 
-    .debug-console-line.info {
-      color: #74C0FC;
-    }
+    @media (max-width: 600px) {
+      .card {
+        padding: 24px;
+      }
 
-    .debug-console-line.warning {
-      color: #FFD93D;
-    }
+      .header h1 {
+        font-size: 24px;
+      }
 
-    .clear-console-btn {
-      margin-top: 12px;
-      width: 100%;
-    }
-
-    .emoji {
-      margin-right: 4px;
-    }
-
-    .info-text {
-      font-size: 13px;
-      color: #6C757D;
-      margin-bottom: 16px;
+      .iframe-wrapper.loaded {
+        height: 400px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="header">
-      <h1>🎙️ FM Tuner Controller</h1>
-      <p>Control the FM tuner across origins using postMessage API</p>
-    </div>
+    <div class="card">
+      <div class="header">
+        <h1>🎙️ FM Tuner</h1>
+        <p>Control keyboard commands</p>
+      </div>
 
-    <!-- Config Panel -->
-    <div class="panel">
-      <div class="panel-title">
-        <span class="emoji">⚙️</span>Configuration
+      <div class="section">
+        <div class="section-title">Configuration</div>
+        <div class="input-group">
+          <input 
+            type="text" 
+            id="iframeUrl" 
+            value="https://comebackfm.fmtuner.org/" 
+            placeholder="Enter URL"
+          >
+          <button class="button button-primary" onclick="loadIframe()">Load</button>
+        </div>
+        <button class="button button-secondary" id="focusBtn" onclick="focusIframe()" disabled>
+          Focus Iframe
+        </button>
       </div>
-      <div class="config-field">
-        <label for="iframeUrl">Iframe URL:</label>
-        <input 
-          type="text" 
-          id="iframeUrl" 
-          value="https://comebackfm.fmtuner.org/" 
-          placeholder="Enter FM tuner URL"
-        >
-      </div>
-      <div class="button-group">
-        <button class="button button-primary" onclick="loadIframe()">Load Iframe</button>
-        <button class="button button-secondary" id="focusBtn" onclick="focusIframe()" disabled>Focus Iframe</button>
-      </div>
-      <div id="configStatus" class="status"></div>
-    </div>
 
-    <!-- Controls Panel -->
-    <div class="panel">
-      <div class="panel-title">
-        <span class="emoji">🎚️</span>Keyboard Controls
-      </div>
-      <p class="info-text">
-        Click buttons or press keys to simulate F1-F4 keypresses on the FM tuner
-      </p>
-      <div class="control-buttons">
-        <button class="button button-success" onclick="dispatchKey(112, 'F1')">F1</button>
-        <button class="button button-success" onclick="dispatchKey(113, 'F2')">F2</button>
-        <button class="button button-success" onclick="dispatchKey(114, 'F3')">F3</button>
-        <button class="button button-success" onclick="dispatchKey(115, 'F4')">F4</button>
-      </div>
-      <div id="controlStatus" class="status"></div>
-    </div>
+      <div class="iframe-wrapper" id="iframeContainer"></div>
 
-    <!-- Iframe Container -->
-    <div class="panel">
-      <div class="panel-title">
-        <span class="emoji">📺</span>Target Iframe (FM-Tuner)
+      <div class="section">
+        <div class="section-title">Controls</div>
+        <div class="control-grid">
+          <button class="button button-control" onclick="dispatchKey(112, 'F1')">F1</button>
+          <button class="button button-control" onclick="dispatchKey(113, 'F2')">F2</button>
+          <button class="button button-control" onclick="dispatchKey(114, 'F3')">F3</button>
+          <button class="button button-control" onclick="dispatchKey(115, 'F4')">F4</button>
+        </div>
       </div>
-      <div id="iframeContainer"></div>
-    </div>
-
-    <!-- Debug Console -->
-    <div class="panel">
-      <div class="panel-title">
-        <span class="emoji">🔍</span>Debug Console
-      </div>
-      <div class="debug-console" id="debugConsole"></div>
-      <button class="button button-secondary clear-console-btn" onclick="clearConsole()">Clear Console</button>
     </div>
   </div>
+
+  <div class="status" id="status"></div>
 
   <script>
     let iframeElement = null;
     let iframeLoaded = false;
 
-    function getTimestamp() {
-      return new Date().toLocaleTimeString();
-    }
-
-    function log(message, type = 'info') {
-      const debugConsoleElement = document.getElementById('debugConsole');
-      const line = document.createElement('div');
-      line.className = `debug-console-line ${type}`;
-      
-      const timestamp = getTimestamp();
-      let emoji = '📝';
-      if (type === 'error') emoji = '❌';
-      else if (type === 'success') emoji = '✅';
-      else if (type === 'warning') emoji = '⚠️';
-      else if (type === 'info') emoji = 'ℹ️';
-      
-      line.textContent = `[${timestamp}] ${emoji} ${message}`;
-      debugConsoleElement.appendChild(line);
-      debugConsoleElement.scrollTop = debugConsoleElement.scrollHeight;
-      
-      // Log to browser console
-      if (type === 'error') {
-        window.console.error(`[${type.toUpperCase()}] ${message}`);
-      } else {
-        window.console.log(`[${type.toUpperCase()}] ${message}`);
-      }
-    }
-
-    function clearConsole() {
-      document.getElementById('debugConsole').innerHTML = '';
-      log('Console cleared - Ready for new events', 'info');
-    }
-
-    function showStatus(elementId, message, type = 'info') {
-      const element = document.getElementById(elementId);
-      element.className = `status status-${type}`;
-      element.textContent = message;
-      element.style.display = 'block';
+    function showStatus(message, type = 'success') {
+      const statusEl = document.getElementById('status');
+      statusEl.textContent = message;
+      statusEl.className = `status show status-${type}`;
       setTimeout(() => {
-        element.style.display = 'none';
-      }, 4000);
+        statusEl.classList.remove('show');
+      }, 3000);
     }
 
     function loadIframe() {
       const url = document.getElementById('iframeUrl').value.trim();
       
       if (!url) {
-        log('Error: Please enter a valid URL', 'error');
-        showStatus('configStatus', '❌ Please enter a valid URL', 'error');
+        showStatus('Please enter a valid URL', 'error');
         return;
       }
 
@@ -382,59 +282,43 @@
       
       iframeElement = document.createElement('iframe');
       iframeElement.src = url;
-      
-      try {
-        iframeElement.sandbox.add('allow-same-origin', 'allow-scripts', 'allow-forms', 'allow-popups');
-      } catch (e) {
-        // Sandbox attribute might not support add method in some browsers
-        iframeElement.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-forms allow-popups');
-      }
+      iframeElement.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-forms allow-popups');
       
       iframeElement.onload = function() {
         iframeLoaded = true;
         document.getElementById('focusBtn').disabled = false;
-        log(`Iframe loaded from: ${url}`, 'success');
-        showStatus('configStatus', '✅ Iframe loaded successfully', 'success');
+        showStatus('Iframe loaded successfully', 'success');
         container.classList.add('loaded');
       };
 
       iframeElement.onerror = function() {
-        log(`Error loading iframe from: ${url}`, 'error');
-        showStatus('configStatus', '❌ Failed to load iframe', 'error');
+        showStatus('Failed to load iframe', 'error');
       };
 
       container.appendChild(iframeElement);
-      log(`Loading iframe from: ${url}`, 'info');
     }
 
     function focusIframe() {
       if (!iframeLoaded || !iframeElement) {
-        log('Iframe not loaded yet', 'error');
-        showStatus('configStatus', '❌ Iframe not loaded', 'error');
+        showStatus('Iframe not loaded', 'error');
         return;
       }
 
       try {
         iframeElement.focus();
-        log('Iframe focused', 'success');
-        showStatus('controlStatus', '✅ Iframe focused', 'success');
+        showStatus('Iframe focused', 'success');
       } catch (error) {
-        log(`Error focusing iframe: ${error.message}`, 'error');
-        showStatus('controlStatus', '❌ Failed to focus iframe', 'error');
+        showStatus('Failed to focus iframe', 'error');
       }
     }
 
     function dispatchKey(keyCode, keyName) {
       if (!iframeLoaded || !iframeElement) {
-        log(`Cannot dispatch ${keyName}: Iframe not loaded`, 'error');
-        showStatus('controlStatus', '❌ Iframe not loaded', 'error');
+        showStatus('Iframe not loaded', 'error');
         return;
       }
 
       try {
-        log(`⬆️ DISPATCHING [${keyName}] to iframe via postMessage`, 'info');
-        log(`Event: keyCode=${keyCode}, keyName="${keyName}"`, 'info');
-
         iframeElement.contentWindow.postMessage(
           {
             type: 'simulateKeyPress',
@@ -447,21 +331,11 @@
           '*'
         );
 
-        log(`${keyName} event dispatched successfully`, 'success');
-        showStatus('controlStatus', `✅ ${keyName} dispatched`, 'success');
+        showStatus(`${keyName} dispatched`, 'success');
       } catch (error) {
-        log(`Error dispatching ${keyName}: ${error.message}`, 'error');
-        showStatus('controlStatus', `❌ Error dispatching ${keyName}`, 'error');
+        showStatus(`Error dispatching ${keyName}`, 'error');
       }
     }
-
-    window.addEventListener('message', function(event) {
-      if (event.data.type === 'iframeLog') {
-        log(`[IFRAME] ${event.data.message}`, 'info');
-      } else if (event.data.type === 'iframeError') {
-        log(`[IFRAME ERROR] ${event.data.message}`, 'error');
-      }
-    });
 
     document.addEventListener('keydown', function(event) {
       const keyMap = {
@@ -476,9 +350,6 @@
         keyMap[event.key]();
       }
     });
-
-    log('FM Tuner Controller initialized', 'success');
-    log('Enter iframe URL and click "Load Iframe" to start', 'info');
   </script>
 </body>
 </html>
