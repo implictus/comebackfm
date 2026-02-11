@@ -307,12 +307,9 @@
       }
       try {
         iframeElement.contentWindow.postMessage(
-          {
-            type: 'focusFrequencyInput'
-          },
+          { type: 'scrollAndFocus' },
           '*'
         );
-        showStatus('Focusing frequency input...', 'success');
         setTimeout(() => {
           const sequence = ['9', '2', '.', '3', 'Enter'];
           let index = 0;
@@ -320,18 +317,15 @@
             if (index < sequence.length) {
               const key = sequence[index];
               iframeElement.contentWindow.postMessage(
-                {
-                  type: 'simulateKeyPress',
-                  key: key
-                },
+                { type: 'simulateKeyPress', key: key },
                 '*'
               );
               index++;
-              setTimeout(sendNextKey, 50);
+              setTimeout(sendNextKey, 100);
             }
           };
           sendNextKey();
-        }, 150);
+        }, 400);
         showStatus('Tuning to 92.3 FM', 'success');
       } catch (error) {
         showStatus('Error tuning frequency', 'error');
