@@ -2,8 +2,8 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Comeback FM - F1-F4 Presets</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1-F4 Keyboard Event Sender - Debug</title>
     <style>
         * {
             margin: 0;
@@ -11,391 +11,559 @@
             box-sizing: border-box;
         }
 
-        html, body {
-            width: 100%;
-            height: 100%;
-            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #121212;
-            color: #ffffff;
-            overflow: hidden;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f9f9f9;
+            padding: 20px;
         }
 
-        body {
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 350px 1fr 1fr;
+            gap: 20px;
+        }
+
+        .control-panel {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
+            gap: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
         }
 
-        .header {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            padding: 12px;
-            display: flex;
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #0052cc;
+            border-bottom: 2px solid #0052cc;
+            padding-bottom: 8px;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 10px;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-            border-bottom: 3px solid #007ACC;
-            flex-shrink: 0;
-            min-height: 100px;
         }
 
-        .preset-button {
-            background: linear-gradient(135deg, #2d2d2d 0%, #3d3d3d 100%);
-            border: 3px solid #4A4A4A;
-            border-radius: 12px;
-            color: #ffffff;
-            font-size: 28px;
-            font-weight: 700;
+        .key-button {
+            background: linear-gradient(135deg, #0052cc 0%, #003d99 100%);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
             cursor: pointer;
-            padding: 16px 24px;
-            min-width: 75px;
-            min-height: 75px;
-            transition: all 0.15s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            touch-action: manipulation;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            position: relative;
-            overflow: hidden;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .preset-button:hover {
-            background: linear-gradient(135deg, #3d3d3d 0%, #4d4d4d 100%);
-            border-color: #007ACC;
+        .key-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 122, 204, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 82, 204, 0.3);
         }
 
-        .preset-button:active {
-            transform: scale(0.95);
+        .key-button:active {
+            transform: translateY(0);
+            background: linear-gradient(135deg, #003d99 0%, #002966 100%);
         }
 
-        .preset-button.pressed {
-            background: linear-gradient(135deg, #1DB954 0%, #2dd975 100%);
-            border-color: #1DB954;
-            box-shadow: 0 0 30px rgba(29, 185, 84, 0.6), inset 0 0 20px rgba(29, 185, 84, 0.2);
-            animation: pressFlash 0.3s ease;
-        }
-
-        @keyframes pressFlash {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 30px rgba(29, 185, 84, 0.6);
-            }
-            50% {
-                box-shadow: 0 0 50px rgba(29, 185, 84, 0.9);
-            }
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 30px rgba(29, 185, 84, 0.6);
-            }
-        }
-
-        .status-bar {
-            background: #1a1a1a;
-            padding: 8px 12px;
-            font-size: 12px;
-            color: #888;
-            border-top: 1px solid #2d2d2d;
-            min-height: 30px;
+        .input-section {
             display: flex;
-            align-items: center;
-            flex-shrink: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .status-indicator {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background: #4A4A4A;
-            border-radius: 50%;
-            margin-right: 8px;
-            flex-shrink: 0;
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
 
-        .status-indicator.active {
-            background: #1DB954;
-            animation: statusPulse 0.6s ease;
+        .input-group label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #333;
         }
 
-        @keyframes statusPulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.4;
-            }
+        .input-group input {
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-family: monospace;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #0052cc;
+            box-shadow: 0 0 4px rgba(0, 82, 204, 0.3);
+        }
+
+        .load-button {
+            background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .load-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .status-box {
+            background: #f0f7ff;
+            border-left: 4px solid #0052cc;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .status-box.loading {
+            background: #fff3cd;
+            border-left-color: #ff9800;
+        }
+
+        .status-box.error {
+            background: #ffebee;
+            border-left-color: #f44336;
+        }
+
+        .status-box.success {
+            background: #e8f5e9;
+            border-left-color: #4caf50;
         }
 
         .iframe-container {
-            flex: 1;
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            background: #000;
+            gap: 10px;
         }
 
-        iframe {
+        .iframe-label {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 600;
+        }
+
+        #targetIframe {
             width: 100%;
-            height: 100%;
+            height: 600px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .console-panel {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .console-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .console-header .title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #0052cc;
+        }
+
+        .clear-button {
+            background: #ff6700;
+            color: white;
             border: none;
-            flex: 1;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.2s ease;
         }
 
-        @media (max-width: 480px) {
-            .header {
-                min-height: 85px;
-                gap: 8px;
-            }
-
-            .preset-button {
-                font-size: 24px;
-                padding: 12px 18px;
-                min-width: 65px;
-                min-height: 65px;
-            }
+        .clear-button:hover {
+            background: #e55a00;
         }
 
-        @media (orientation: landscape) {
-            .header {
-                min-height: 70px;
-                gap: 8px;
+        #consoleOutput {
+            background: #1e1e1e;
+            color: #0ff;
+            padding: 12px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            height: 600px;
+            overflow-y: auto;
+            line-height: 1.4;
+            border: 1px solid #333;
+        }
+
+        .log-entry {
+            margin-bottom: 6px;
+            word-break: break-word;
+        }
+
+        .log-info {
+            color: #0ff;
+        }
+
+        .log-error {
+            color: #ff4444;
+        }
+
+        .log-success {
+            color: #44ff44;
+        }
+
+        .log-warning {
+            color: #ffaa00;
+        }
+
+        .log-sent {
+            color: #00ddff;
+        }
+
+        .log-received {
+            color: #88ff88;
+        }
+
+        .timestamp {
+            color: #888;
+            font-size: 0.75em;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+
+        .stat-item {
+            background: #f5f5f5;
+            padding: 8px;
+            border-radius: 4px;
+            border-left: 3px solid #0052cc;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            color: #0052cc;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                grid-template-columns: 1fr;
             }
 
-            .preset-button {
-                font-size: 20px;
-                padding: 10px 16px;
-                min-width: 55px;
-                min-height: 55px;
+            .control-panel {
+                position: static;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <button class="preset-button" data-preset="F1" onclick="injectKeyboardEvent('F1')">F1</button>
-        <button class="preset-button" data-preset="F2" onclick="injectKeyboardEvent('F2')">F2</button>
-        <button class="preset-button" data-preset="F3" onclick="injectKeyboardEvent('F3')">F3</button>
-        <button class="preset-button" data-preset="F4" onclick="injectKeyboardEvent('F4')">F4</button>
-    </div>
+    <div class="container">
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div>
+                <div class="section-title">⌨️ Controls</div>
+                <div class="button-grid">
+                    <button class="key-button" data-key="F1">F1</button>
+                    <button class="key-button" data-key="F2">F2</button>
+                    <button class="key-button" data-key="F3">F3</button>
+                    <button class="key-button" data-key="F4">F4</button>
+                </div>
+            </div>
 
-    <div class="status-bar">
-        <span class="status-indicator" id="statusIndicator"></span>
-        <span id="statusText">Gereed</span>
-    </div>
+            <div class="input-section">
+                <div class="section-title">⚙️ Config</div>
+                <div class="input-group">
+                    <label for="iframeUrl">Iframe URL:</label>
+                    <input 
+                        type="text" 
+                        id="iframeUrl" 
+                        placeholder="https://..."
+                        value="https://comebackfm.fmtuner.org/"
+                    >
+                </div>
+                <button class="load-button" id="loadIframeButton">
+                    Load Iframe
+                </button>
+            </div>
 
-    <div class="iframe-container">
-        <iframe id="fmTunerFrame" src="https://comebackfm.fmtuner.org/"></iframe>
+            <div id="statusBox" class="status-box">
+                <strong>Status:</strong> Ready
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-label">Sent:</div>
+                    <div class="stat-value" id="sentCount">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Received:</div>
+                    <div class="stat-value" id="receivedCount">0</div>
+                </div>
+            </div>
+
+            <div class="input-section">
+                <div class="section-title">🔧 Test</div>
+                <button class="load-button" id="testMessageButton" style="background: #ff9800;">
+                    Test postMessage
+                </button>
+            </div>
+        </div>
+
+        <!-- Iframe Container -->
+        <div class="iframe-container">
+            <div class="iframe-label">📺 Target Iframe (Cross-Origin)</div>
+            <iframe 
+                id="targetIframe" 
+                src="https://comebackfm.fmtuner.org/"
+                title="Target webpage"
+                sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+            ></iframe>
+        </div>
+
+        <!-- Console Panel -->
+        <div class="console-panel">
+            <div class="console-header">
+                <span class="title">📋 Debug Console</span>
+                <button class="clear-button">Clear</button>
+            </div>
+            <div id="consoleOutput"></div>
+        </div>
     </div>
 
     <script>
-        const iframe = document.getElementById('fmTunerFrame');
-        const statusText = document.getElementById('statusText');
-        const statusIndicator = document.getElementById('statusIndicator');
+        // Advanced Console Logger
+        class ConsoleLogger {
+            constructor(outputElementId) {
+                this.outputElement = document.getElementById(outputElementId);
+                this.logs = [];
+                this.sentCount = 0;
+                this.receivedCount = 0;
+            }
 
-        function getKeyCode(keyName) {
-            const keyCodes = {
-                'F1': 112,
-                'F2': 113,
-                'F3': 114,
-                'F4': 115
-            };
-            return keyCodes[keyName] || 0;
-        }
+            log(message, type = 'info') {
+                const timestamp = new Date().toLocaleTimeString('nl-NL', { hour12: false });
+                const logEntry = { message, type, timestamp };
+                this.logs.push(logEntry);
+                this.render();
+                console.log(`[${type.toUpperCase()}] ${message}`);
+            }
 
-        function injectKeyboardEvent(keyName) {
-            console.log(`\n========== ${keyName} BUTTON PRESSED ==========`);
-            
-            const button = document.querySelector(`[data-preset="${keyName}"]`);
-            
-            // Visual feedback
-            button.classList.add('pressed');
-            statusIndicator.classList.add('active');
-            updateStatus(`${keyName} verstuurd...`);
+            info(message) { this.log(message, 'info'); }
+            error(message) { this.log(message, 'error'); }
+            success(message) { this.log(message, 'success'); }
+            warning(message) { this.log(message, 'warning'); }
+            sent(message) { 
+                this.sentCount++; 
+                this.log(message, 'sent');
+                this.updateStats();
+            }
+            received(message) { 
+                this.receivedCount++; 
+                this.log(message, 'received');
+                this.updateStats();
+            }
 
-            setTimeout(() => {
-                button.classList.remove('pressed');
-                statusIndicator.classList.remove('active');
-            }, 300);
+            clear() {
+                this.logs = [];
+                this.sentCount = 0;
+                this.receivedCount = 0;
+                this.render();
+                this.updateStats();
+            }
 
-            const keyCode = getKeyCode(keyName);
+            render() {
+                this.outputElement.innerHTML = this.logs
+                    .map(log => {
+                        const classList = `log-entry log-${log.type}`;
+                        return `<div class="${classList}"><span class="timestamp">[${log.timestamp}]</span> ${this.escapeHtml(log.message)}</div>`;
+                    })
+                    .join('');
+                this.outputElement.scrollTop = this.outputElement.scrollHeight;
+            }
 
-            try {
-                if (!iframe.contentWindow) {
-                    console.log('❌ FOUT: iframe.contentWindow is niet beschikbaar');
-                    updateStatus('❌ Iframe niet toegankelijk');
-                    return;
-                }
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
 
-                console.log('✓ iframe.contentWindow beschikbaar');
-
-                // Create keyboard event with all necessary properties
-                const eventInit = {
-                    key: keyName,
-                    code: keyName,
-                    keyCode: keyCode,
-                    which: keyCode,
-                    bubbles: true,
-                    cancelable: true,
-                    view: iframe.contentWindow,
-                    // Additional properties for better compatibility
-                    charCode: 0,
-                    location: 0,
-                    repeat: false,
-                    ctrlKey: false,
-                    altKey: false,
-                    shiftKey: false,
-                    metaKey: false
-                };
-
-                console.log('Event eigenschappen:', eventInit);
-
-                // Create and dispatch keydown event
-                const keydownEvent = new KeyboardEvent('keydown', eventInit);
-                console.log('Created keydown event:', keydownEvent);
-
-                // Dispatch targets in order of priority
-                const dispatchTargets = [
-                    {
-                        name: 'iframe.contentWindow',
-                        target: iframe.contentWindow
-                    },
-                    {
-                        name: 'iframe.contentDocument',
-                        target: iframe.contentDocument
-                    },
-                    {
-                        name: 'iframe.contentDocument.documentElement',
-                        target: iframe.contentDocument.documentElement
-                    },
-                    {
-                        name: 'iframe.contentDocument.body',
-                        target: iframe.contentDocument.body
-                    },
-                    {
-                        name: 'window (parent)',
-                        target: window
-                    },
-                    {
-                        name: 'document (parent)',
-                        target: document
-                    }
-                ];
-
-                console.log('\n--- DISPATCHING KEYDOWN EVENT ---');
-                let successCount = 0;
-
-                for (const dispatch of dispatchTargets) {
-                    try {
-                        if (dispatch.target) {
-                            const result = dispatch.target.dispatchEvent(keydownEvent);
-                            console.log(`✓ Keydown dispatched to ${dispatch.name} - preventDefault possible: ${!result}`);
-                            successCount++;
-                        }
-                    } catch (err) {
-                        console.log(`✗ Failed to dispatch to ${dispatch.name}: ${err.message}`);
-                    }
-                }
-
-                // Wait a bit, then dispatch keyup event
-                setTimeout(() => {
-                    const keyupEvent = new KeyboardEvent('keyup', eventInit);
-                    
-                    console.log('\n--- DISPATCHING KEYUP EVENT ---');
-
-                    for (const dispatch of dispatchTargets) {
-                        try {
-                            if (dispatch.target) {
-                                const result = dispatch.target.dispatchEvent(keyupEvent);
-                                console.log(`✓ Keyup dispatched to ${dispatch.name} - preventDefault possible: ${!result}`);
-                            }
-                        } catch (err) {
-                            console.log(`✗ Failed to dispatch to ${dispatch.name}: ${err.message}`);
-                        }
-                    }
-
-                    console.log('\n========== EVENT INJECTION COMPLETE ==========\n');
-                }, 50);
-
-                console.log(`✓ ${keyName} event injection started successfully (${successCount} targets)`);
-                updateStatus(`${keyName} naar iframe verstuurd`);
-
-            } catch (error) {
-                console.error('❌ FOUT bij event injection:', error);
-                console.error('Error stack:', error.stack);
-                updateStatus('❌ Fout bij versturen');
+            updateStats() {
+                document.getElementById('sentCount').textContent = this.sentCount;
+                document.getElementById('receivedCount').textContent = this.receivedCount;
             }
         }
 
-        function updateStatus(message) {
-            statusText.textContent = message;
+        // Initialize
+        const logger = new ConsoleLogger('consoleOutput');
+        const keyButtons = document.querySelectorAll('.key-button[data-key]');
+        const targetIframe = document.getElementById('targetIframe');
+        const clearButton = document.querySelector('.clear-button');
+        const loadIframeButton = document.getElementById('loadIframeButton');
+        const testMessageButton = document.getElementById('testMessageButton');
+        const iframeUrlInput = document.getElementById('iframeUrl');
+        const statusBox = document.getElementById('statusBox');
+
+        logger.info('✅ Keyboard Event Debugger initialized');
+        logger.info('🎯 Ready to send F1-F4 events via postMessage');
+
+        // Helper function to update status
+        function updateStatus(message, type = 'info') {
+            statusBox.textContent = '🔹 ' + message;
+            statusBox.className = 'status-box ' + type;
         }
 
-        // Listen for physical F1-F4 key presses
-        document.addEventListener('keydown', (e) => {
-            if (['F1', 'F2', 'F3', 'F4'].includes(e.key)) {
-                e.preventDefault();
-                console.log(`Fysieke ${e.key} toets ingedrukt`);
-                injectKeyboardEvent(e.key);
+        // Load iframe
+        loadIframeButton.addEventListener('click', () => {
+            const url = iframeUrlInput.value.trim();
+            if (!url) {
+                logger.error('❌ Please enter a valid URL');
+                updateStatus('Error: No URL provided', 'error');
+                return;
+            }
+            try {
+                new URL(url);
+                targetIframe.src = url;
+                updateStatus('Loading iframe...', 'loading');
+                logger.info(`📺 Loading iframe from: ${url}`);
+                
+                setTimeout(() => {
+                    updateStatus('Iframe loaded - Ready to send events', 'success');
+                    logger.success(`✅ Iframe loaded`);
+                }, 1500);
+            } catch (e) {
+                logger.error(`❌ Invalid URL: ${e.message}`);
+                updateStatus('Error: Invalid URL', 'error');
             }
         });
 
-        // Initialize console logging
-        console.log('%c=== COMEBACK FM KEYBOARD EVENT INJECTOR ===', 'color: #1DB954; font-size: 16px; font-weight: bold;');
-        console.log('%cGereed voor F1-F4 knop klikken of toetsenbord input', 'color: #007ACC; font-size: 12px;');
-        console.log('Open de browser console (F12) om event logging te zien');
-        
-        updateStatus('Gereed - Klik F1, F2, F3 of F4');
+        // Clear console
+        clearButton.addEventListener('click', () => {
+            logger.clear();
+            updateStatus('Console cleared', 'info');
+            logger.info('📋 Console cleared - Ready for new events');
+        });
+
+        // Send keyboard event via postMessage
+        function sendKeyboardEvent(key) {
+            const keyCode = 111 + parseInt(key.slice(1));
+            const eventData = {
+                type: 'keyboardEvent',
+                key: key,
+                code: key,
+                keyCode: keyCode,
+                which: keyCode,
+                timestamp: new Date().toISOString(),
+                source: 'F-KEY-SENDER'
+            };
+
+            logger.sent(`⬆️ SENDING [${key}] → iframe`);
+            logger.info(`   Payload: ${JSON.stringify(eventData)}`);
+
+            // Send postMessage
+            try {
+                if (targetIframe.contentWindow) {
+                    targetIframe.contentWindow.postMessage(eventData, '*');
+                    logger.success(`   ✓ postMessage sent successfully`);
+                } else {
+                    logger.error('   ✗ iframe.contentWindow is not available');
+                }
+            } catch (e) {
+                logger.error(`   ✗ Error sending postMessage: ${e.message}`);
+            }
+
+            updateStatus(`Sent: ${key}`, 'success');
+        }
+
+        // Button click handlers
+        keyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const key = button.dataset.key;
+                button.style.transform = 'scale(0.95)';
+                sendKeyboardEvent(key);
+                setTimeout(() => { button.style.transform = ''; }, 100);
+            });
+        });
+
+        // Keyboard shortcuts (F1-F4)
+        document.addEventListener('keydown', (e) => {
+            if (e.key.startsWith('F') && e.key.length === 2) {
+                const keyNum = parseInt(e.key.slice(1));
+                if (keyNum >= 1 && keyNum <= 4) {
+                    e.preventDefault();
+                    const button = document.querySelector(`[data-key="${e.key}"]`);
+                    if (button) {
+                        button.click();
+                    }
+                }
+            }
+        });
+
+        // Listen for messages from iframe
+        window.addEventListener('message', (event) => {
+            logger.received(`⬇️ RECEIVED from iframe`);
+            logger.info(`   Origin: ${event.origin}`);
+            logger.info(`   Data: ${JSON.stringify(event.data)}`);
+            updateStatus(`Response received!`, 'success');
+        });
+
+        // Test message button
+        testMessageButton.addEventListener('click', () => {
+            logger.info('🧪 Testing postMessage communication...');
+            const testData = {
+                type: 'test',
+                message: 'Hello from parent',
+                timestamp: new Date().toISOString()
+            };
+            
+            try {
+                targetIframe.contentWindow.postMessage(testData, '*');
+                logger.sent(`🧪 Test message sent`);
+                logger.info(`   Payload: ${JSON.stringify(testData)}`);
+                logger.warning('   Waiting for response (listen in iframe console)...');
+            } catch (e) {
+                logger.error(`Test failed: ${e.message}`);
+            }
+        });
+
+        // Initial status
+        updateStatus('Ready - Click buttons or press F1-F4', 'success');
+        logger.success('🚀 System ready for keyboard events');
     </script>
 </body>
 </html>
-</function_calls>
-
-Perfect! Ik heb nu een **robuuste keyboard event injector** gemaakt die **meerdere dispatch strategieën** gebruikt.
-
-**✨ Hoe het werkt:**
-
-1. **4 Grote knoppen (F1-F4)** in een horizontale rij
-2. **Fullscreen iframe** eronder met de FM tuner pagina
-3. Wanneer je een knop klikt, stuurt de app keyboard events naar:
-   - `iframe.contentWindow` (primair)
-   - `iframe.contentDocument` 
-   - `iframe.contentDocument.documentElement`
-   - `iframe.contentDocument.body`
-   - Parent window/document (fallback)
-
-4. **Echte KeyboardEvent** met alle juiste eigenschappen:
-   - `key`, `code`, `keyCode`, `which`
-   - `bubbles: true, cancelable: true`
-   - Alle modifier toetsen correct ingesteld
-
-5. **Console logging** voor debugging - open F12 om alles te zien!
-
-**🎯 Features:**
-
-✅ Stuurt zowel `keydown` als `keyup` events  
-✅ Meerdere dispatch targets voor maximale compatibiliteit  
-✅ Visuele feedback (knop wordt groen)  
-✅ Status meldingen onderaan  
-✅ Console logging voor elke event  
-✅ Ondersteunt fysieke F1-F4 toetsen ook  
-✅ Responsive design voor alle schermen  
-
-**📱 Debugging:**
-
-Open de **browser console (F12)** en je ziet:
-- Welke targets de event ontvangt
-- Of de dispatch succesvol was
-- Of `preventDefault` mogelijk is
-
-**💡 Als het nog niet werkt:**
-
-1. Zet de telefoon in "Desktop Site" mode in Chrome
-2. Check de console voor error meldingen
-3. De FM tuner pagina moet naar keyboard events luisteren
-
-Werkt het nu veel beter? 🚀
