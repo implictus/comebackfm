@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F1-F4 Keyboard Event Sender - Debug</title>
+    <title>F1-F4 Keyboard Event Dispatcher</title>
     <style>
         * {
             margin: 0;
@@ -131,6 +131,7 @@
             padding: 12px;
             border-radius: 4px;
             font-size: 0.85rem;
+            line-height: 1.4;
         }
 
         .status-box.loading {
@@ -145,6 +146,25 @@
 
         .status-box.success {
             background: #e8f5e9;
+            border-left-color: #4caf50;
+        }
+
+        .status-box.warning {
+            background: #fff3cd;
+            border-left-color: #ff9800;
+        }
+
+        .focus-indicator {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+
+        .focus-indicator.focused {
+            background: #c8e6c9;
             border-left-color: #4caf50;
         }
 
@@ -167,8 +187,14 @@
         #targetIframe {
             width: 100%;
             height: 600px;
-            border: 2px solid #ddd;
+            border: 3px solid #ddd;
             border-radius: 4px;
+            transition: border-color 0.3s ease;
+        }
+
+        #targetIframe.focused {
+            border-color: #4caf50;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
         }
 
         .console-panel {
@@ -242,43 +268,13 @@
             color: #ffaa00;
         }
 
-        .log-sent {
-            color: #00ddff;
-        }
-
-        .log-received {
-            color: #88ff88;
+        .log-dispatch {
+            color: #ffaa00;
         }
 
         .timestamp {
             color: #888;
             font-size: 0.75em;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            font-size: 0.8rem;
-            margin-top: 10px;
-        }
-
-        .stat-item {
-            background: #f5f5f5;
-            padding: 8px;
-            border-radius: 4px;
-            border-left: 3px solid #0052cc;
-        }
-
-        .stat-label {
-            color: #666;
-            font-weight: 500;
-        }
-
-        .stat-value {
-            color: #0052cc;
-            font-weight: bold;
-            font-size: 1.1em;
         }
 
         @media (max-width: 1200px) {
@@ -322,32 +318,25 @@
                 </button>
             </div>
 
-            <div id="statusBox" class="status-box">
+            <div id="statusBox" class="status-box success">
                 <strong>Status:</strong> Ready
             </div>
 
-            <div class="stats">
-                <div class="stat-item">
-                    <div class="stat-label">Sent:</div>
-                    <div class="stat-value" id="sentCount">0</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">Received:</div>
-                    <div class="stat-value" id="receivedCount">0</div>
-                </div>
+            <div class="focus-indicator" id="focusIndicator">
+                🔴 Iframe NOT focused
             </div>
 
             <div class="input-section">
-                <div class="section-title">🔧 Test</div>
-                <button class="load-button" id="testMessageButton" style="background: #ff9800;">
-                    Test postMessage
+                <div class="section-title">🎯 Action</div>
+                <button class="load-button" id="focusIframeButton" style="background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);">
+                    Focus Iframe
                 </button>
             </div>
         </div>
 
         <!-- Iframe Container -->
         <div class="iframe-container">
-            <div class="iframe-label">📺 Target Iframe (Cross-Origin)</div>
+            <div class="iframe-label">📺 Target Iframe (FM-Tuner)</div>
             <iframe 
                 id="targetIframe" 
                 src="https://comebackfm.fmtuner.org/"
@@ -367,13 +356,11 @@
     </div>
 
     <script>
-        // Advanced Console Logger
+        // Console Logger
         class ConsoleLogger {
             constructor(outputElementId) {
                 this.outputElement = document.getElementById(outputElementId);
                 this.logs = [];
-                this.sentCount = 0;
-                this.receivedCount = 0;
             }
 
             log(message, type = 'info') {
@@ -388,23 +375,11 @@
             error(message) { this.log(message, 'error'); }
             success(message) { this.log(message, 'success'); }
             warning(message) { this.log(message, 'warning'); }
-            sent(message) { 
-                this.sentCount++; 
-                this.log(message, 'sent');
-                this.updateStats();
-            }
-            received(message) { 
-                this.receivedCount++; 
-                this.log(message, 'received');
-                this.updateStats();
-            }
+            dispatch(message) { this.log(message, 'dispatch'); }
 
             clear() {
                 this.logs = [];
-                this.sentCount = 0;
-                this.receivedCount = 0;
                 this.render();
-                this.updateStats();
             }
 
             render() {
@@ -422,11 +397,6 @@
                 div.textContent = text;
                 return div.innerHTML;
             }
-
-            updateStats() {
-                document.getElementById('sentCount').textContent = this.sentCount;
-                document.getElementById('receivedCount').textContent = this.receivedCount;
-            }
         }
 
         // Initialize
@@ -435,17 +405,31 @@
         const targetIframe = document.getElementById('targetIframe');
         const clearButton = document.querySelector('.clear-button');
         const loadIframeButton = document.getElementById('loadIframeButton');
-        const testMessageButton = document.getElementById('testMessageButton');
+        const focusIframeButton = document.getElementById('focusIframeButton');
         const iframeUrlInput = document.getElementById('iframeUrl');
         const statusBox = document.getElementById('statusBox');
+        const focusIndicator = document.getElementById('focusIndicator');
 
-        logger.info('✅ Keyboard Event Debugger initialized');
-        logger.info('🎯 Ready to send F1-F4 events via postMessage');
+        let iframeIsFocused = false;
+
+        logger.info('✅ Keyboard Event Dispatcher initialized');
+        logger.info('🎯 Ready to dispatch KeyboardEvent objects');
 
         // Helper function to update status
         function updateStatus(message, type = 'info') {
             statusBox.textContent = '🔹 ' + message;
             statusBox.className = 'status-box ' + type;
+        }
+
+        // Helper function to update focus indicator
+        function updateFocusIndicator() {
+            if (iframeIsFocused) {
+                focusIndicator.textContent = '🟢 Iframe FOCUSED - Ready to dispatch events';
+                focusIndicator.classList.add('focused');
+            } else {
+                focusIndicator.textContent = '🔴 Iframe NOT focused - Click "Focus Iframe" first';
+                focusIndicator.classList.remove('focused');
+            }
         }
 
         // Load iframe
@@ -459,16 +443,117 @@
             try {
                 new URL(url);
                 targetIframe.src = url;
+                iframeIsFocused = false;
+                updateFocusIndicator();
                 updateStatus('Loading iframe...', 'loading');
                 logger.info(`📺 Loading iframe from: ${url}`);
                 
                 setTimeout(() => {
-                    updateStatus('Iframe loaded - Ready to send events', 'success');
-                    logger.success(`✅ Iframe loaded`);
+                    updateStatus('Iframe loaded - Click "Focus Iframe" to start', 'success');
+                    logger.success(`✅ Iframe loaded. Now focus it to dispatch events.`);
                 }, 1500);
             } catch (e) {
                 logger.error(`❌ Invalid URL: ${e.message}`);
                 updateStatus('Error: Invalid URL', 'error');
+            }
+        });
+
+        // Focus iframe button
+        focusIframeButton.addEventListener('click', () => {
+            try {
+                targetIframe.focus();
+                iframeIsFocused = true;
+                updateFocusIndicator();
+                updateStatus('✅ Iframe focused', 'success');
+                logger.success(`🎯 Iframe focused! Ready to dispatch keyboard events`);
+                targetIframe.classList.add('focused');
+            } catch (e) {
+                logger.error(`❌ Could not focus iframe: ${e.message}`);
+                updateStatus('Error: Could not focus', 'error');
+            }
+        });
+
+        // Dispatch keyboard event
+        function dispatchKeyboardEvent(key) {
+            if (!iframeIsFocused) {
+                logger.warning(`⚠️  Iframe is not focused! Click "Focus Iframe" first`);
+                updateStatus('Error: Iframe not focused', 'warning');
+                return;
+            }
+
+            const keyCode = 111 + parseInt(key.slice(1));
+            
+            try {
+                logger.dispatch(`⬆️ DISPATCHING [${key}] on iframe.contentDocument`);
+
+                // Create KeyboardEvent
+                const keydownEvent = new KeyboardEvent('keydown', {
+                    key: key,
+                    code: key,
+                    keyCode: keyCode,
+                    which: keyCode,
+                    bubbles: true,
+                    cancelable: true,
+                    view: targetIframe.contentWindow
+                });
+
+                logger.info(`   Event created: ${key} (keyCode: ${keyCode})`);
+                logger.info(`   Bubbles: true, Cancelable: true`);
+
+                // Dispatch on iframe's document
+                const dispatched = targetIframe.contentDocument.dispatchEvent(keydownEvent);
+                
+                if (dispatched) {
+                    logger.success(`   ✓ Event dispatched successfully!`);
+                    updateStatus(`✅ Dispatched ${key}`, 'success');
+                } else {
+                    logger.warning(`   ⚠️  Event was cancelled by target`);
+                    updateStatus(`⚠️  Event cancelled`, 'warning');
+                }
+
+                // Also dispatch keyup
+                const keyupEvent = new KeyboardEvent('keyup', {
+                    key: key,
+                    code: key,
+                    keyCode: keyCode,
+                    which: keyCode,
+                    bubbles: true,
+                    cancelable: true,
+                    view: targetIframe.contentWindow
+                });
+
+                targetIframe.contentDocument.dispatchEvent(keyupEvent);
+                logger.info(`   ✓ keyup event also dispatched`);
+
+            } catch (e) {
+                logger.error(`❌ Error dispatching event: ${e.message}`);
+                logger.error(`   Stack: ${e.stack}`);
+                updateStatus('Error: Could not dispatch', 'error');
+            }
+        }
+
+        // Button click handlers
+        keyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const key = button.dataset.key;
+                button.style.transform = 'scale(0.95)';
+                dispatchKeyboardEvent(key);
+                setTimeout(() => { button.style.transform = ''; }, 100);
+            });
+        });
+
+        // Keyboard shortcuts (F1-F4)
+        document.addEventListener('keydown', (e) => {
+            if (e.key.startsWith('F') && e.key.length === 2) {
+                const keyNum = parseInt(e.key.slice(1));
+                if (keyNum >= 1 && keyNum <= 4) {
+                    // Don't prevent default - let browser handle F keys naturally
+                    const button = document.querySelector(`[data-key="${e.key}"]`);
+                    if (button) {
+                        logger.warning(`🔑 Physical ${e.key} key pressed on main document`);
+                        logger.info(`   Note: This won't reach iframe. Click button or focus iframe first.`);
+                    }
+                }
             }
         });
 
@@ -479,91 +564,11 @@
             logger.info('📋 Console cleared - Ready for new events');
         });
 
-        // Send keyboard event via postMessage
-        function sendKeyboardEvent(key) {
-            const keyCode = 111 + parseInt(key.slice(1));
-            const eventData = {
-                type: 'keyboardEvent',
-                key: key,
-                code: key,
-                keyCode: keyCode,
-                which: keyCode,
-                timestamp: new Date().toISOString(),
-                source: 'F-KEY-SENDER'
-            };
-
-            logger.sent(`⬆️ SENDING [${key}] → iframe`);
-            logger.info(`   Payload: ${JSON.stringify(eventData)}`);
-
-            // Send postMessage
-            try {
-                if (targetIframe.contentWindow) {
-                    targetIframe.contentWindow.postMessage(eventData, '*');
-                    logger.success(`   ✓ postMessage sent successfully`);
-                } else {
-                    logger.error('   ✗ iframe.contentWindow is not available');
-                }
-            } catch (e) {
-                logger.error(`   ✗ Error sending postMessage: ${e.message}`);
-            }
-
-            updateStatus(`Sent: ${key}`, 'success');
-        }
-
-        // Button click handlers
-        keyButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const key = button.dataset.key;
-                button.style.transform = 'scale(0.95)';
-                sendKeyboardEvent(key);
-                setTimeout(() => { button.style.transform = ''; }, 100);
-            });
-        });
-
-        // Keyboard shortcuts (F1-F4)
-        document.addEventListener('keydown', (e) => {
-            if (e.key.startsWith('F') && e.key.length === 2) {
-                const keyNum = parseInt(e.key.slice(1));
-                if (keyNum >= 1 && keyNum <= 4) {
-                    e.preventDefault();
-                    const button = document.querySelector(`[data-key="${e.key}"]`);
-                    if (button) {
-                        button.click();
-                    }
-                }
-            }
-        });
-
-        // Listen for messages from iframe
-        window.addEventListener('message', (event) => {
-            logger.received(`⬇️ RECEIVED from iframe`);
-            logger.info(`   Origin: ${event.origin}`);
-            logger.info(`   Data: ${JSON.stringify(event.data)}`);
-            updateStatus(`Response received!`, 'success');
-        });
-
-        // Test message button
-        testMessageButton.addEventListener('click', () => {
-            logger.info('🧪 Testing postMessage communication...');
-            const testData = {
-                type: 'test',
-                message: 'Hello from parent',
-                timestamp: new Date().toISOString()
-            };
-            
-            try {
-                targetIframe.contentWindow.postMessage(testData, '*');
-                logger.sent(`🧪 Test message sent`);
-                logger.info(`   Payload: ${JSON.stringify(testData)}`);
-                logger.warning('   Waiting for response (listen in iframe console)...');
-            } catch (e) {
-                logger.error(`Test failed: ${e.message}`);
-            }
-        });
-
         // Initial status
-        updateStatus('Ready - Click buttons or press F1-F4', 'success');
-        logger.success('🚀 System ready for keyboard events');
+        updateStatus('Ready - Load iframe first', 'success');
+        updateFocusIndicator();
+        logger.success('🚀 System ready');
+        logger.info('📖 Workflow: Load Iframe → Focus Iframe → Send F1-F4');
     </script>
 </body>
 </html>
