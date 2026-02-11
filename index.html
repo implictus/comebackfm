@@ -136,6 +136,13 @@
     .button-frequency:active {
       transform: scale(0.98);
     }
+    .button-frequency.alt {
+      background: #8B5CF6;
+    }
+    .button-frequency.alt:hover {
+      background: #7C3AED;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    }
     .control-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -227,7 +234,8 @@
           <button class="button button-control" onclick="dispatchKey(113, 'F2')">F2</button>
           <button class="button button-control" onclick="dispatchKey(114, 'F3')">F3</button>
           <button class="button button-control" onclick="dispatchKey(115, 'F4')">F4</button>
-          <button class="button button-frequency" onclick="tuneFrequency()">92.3 FM</button>
+          <button class="button button-frequency" onclick="tuneFrequency('92.3')">92.3 FM</button>
+          <button class="button button-frequency alt" onclick="tuneFrequency('93.5')">93.5 FM</button>
         </div>
       </div>
     </div>
@@ -300,35 +308,24 @@
         showStatus(`Error dispatching ${keyName}`, 'error');
       }
     }
-    function tuneFrequency() {
+    function tuneFrequency(frequency) {
       if (!iframeLoaded || !iframeElement) {
         showStatus('Iframe not loaded', 'error');
         return;
       }
       try {
         iframeElement.contentWindow.postMessage(
-          { type: 'scrollAndFocus' },
+          { 
+            type: 'scrollAndFocus',
+            frequency: frequency
+          },
           '*'
         );
         setTimeout(() => {
-          const sequence = ['9', '2', '.', '3', 'Enter'];
-          let index = 0;
-          const sendNextKey = () => {
-            if (index < sequence.length) {
-              const key = sequence[index];
-              iframeElement.contentWindow.postMessage(
-                { type: 'simulateKeyPress', key: key },
-                '*'
-              );
-              index++;
-              setTimeout(sendNextKey, 100);
-            }
-          };
-          sendNextKey();
-        }, 400);
-        showStatus('Tuning to 92.3 FM', 'success');
+          showStatus(`Tuning to ${frequency} FM`, 'success');
+        }, 500);
       } catch (error) {
-        showStatus('Error tuning frequency', 'error');
+        showStatus(`Error tuning frequency`, 'error');
       }
     }
     document.addEventListener('keydown', function(event) {
