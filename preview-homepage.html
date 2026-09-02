@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PiratenKrakers.nl — visuele preview</title>
+<link rel="stylesheet" href="piratenkrakers/assets/css/main.css">
+<link rel="icon" href="piratenkrakers/assets/img/favicon.svg" type="image/svg+xml">
+<style>:root{--pk-blue:#3B9EFF;--pk-live:#3B9EFF;--pk-ink:#070B16;--pk-cream:#F5F7FB}</style>
+</head>
+<body class="pk-body pk-has-player pk-home is-playing">
+<header class="pk-header">
+  <div class="pk-header-inner">
+    <a class="pk-logo" href="#">
+      <img class="pk-logo-mark" src="piratenkrakers/assets/img/logo-mark.png" alt="" width="44" height="44">
+      <span class="pk-logo-type">
+        <span class="pk-logo-stack">
+          <span class="pk-logo-piraten">PIRATEN</span>
+          <span class="pk-logo-krakers">KRAKERS<span class="pk-logo-nl">.NL</span></span>
+        </span>
+      </span>
+    </a>
+    <nav class="pk-nav is-open" style="position:static;transform:none;opacity:1;pointer-events:auto;background:transparent;border:0;padding:0;display:flex;margin-left:auto;align-items:center;gap:8px">
+      <ul class="pk-nav-list" style="flex-direction:row">
+        <li class="current-menu-item"><a href="#">Home</a></li>
+        <li><a href="#">Live</a></li>
+        <li><a href="#">Programma</a></li>
+        <li><a href="#">DJ's</a></li>
+        <li><a href="#">Verzoekjes</a></li>
+        <li><a href="#">Nieuws</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+      <button class="pk-btn pk-btn-live" type="button"><span class="pk-live-dot"></span> Luister live</button>
+    </nav>
+  </div>
+</header>
+<main class="pk-main pk-main--home">
+  <section class="pk-hero">
+    <div class="pk-hero-bg" style="--pk-hero-image:url('piratenkrakers/assets/img/hero-studio.jpg')"></div>
+    <div class="pk-hero-shade"></div>
+    <div class="pk-hero-inner">
+      <div class="pk-hero-copy">
+        <p class="pk-onair">ON AIR</p>
+        <h1 class="pk-hero-brand">PiratenKrakers<span>.nl</span></h1>
+        <p class="pk-slogan">Muziek uit het hart</p>
+        <p class="pk-live-badge is-live"><span class="pk-live-dot"></span> NU LIVE</p>
+        <p class="pk-hero-track"><strong>PiratenKrakers.nl</strong><span>Live radio</span></p>
+        <p class="pk-hero-dj">DJ Nachtvlucht</p>
+        <p class="pk-hero-show">De Avondploeg</p>
+      </div>
+      <div class="pk-hero-playwrap">
+        <button class="pk-play-hero" type="button"><span class="pk-play-waves"></span><span class="pk-play-icon"></span></button>
+        <p class="pk-play-caption">Luister live</p>
+      </div>
+    </div>
+    <article class="pk-now">
+      <p class="pk-now-kicker"><span class="pk-live-dot"></span> Nu op de radio</p>
+      <figure class="pk-artwork"><img src="piratenkrakers/assets/img/fallback-artwork.jpg" alt=""></figure>
+      <div class="pk-now-meta">
+        <p class="pk-now-artist">PiratenKrakers.nl</p>
+        <p class="pk-now-title">Live radio</p>
+        <p class="pk-now-byline">DJ Nachtvlucht · De Avondploeg</p>
+      </div>
+      <div class="pk-now-aside">
+        <div class="pk-vu"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <p class="pk-listeners">142 luisteraars</p>
+      </div>
+    </article>
+  </section>
+  <section class="pk-section pk-dayguide">
+    <div class="pk-section-head">
+      <div><p class="pk-kicker">Vandaag</p><h2>Vandaag op PiratenKrakers</h2></div>
+      <a class="pk-btn pk-btn-ghost pk-btn-compact" href="#">Bekijk volledig programma</a>
+    </div>
+    <div class="pk-dayguide-track">
+      <article class="pk-slot"><time>06:00 – 09:00</time><h3>De Vroege Start</h3><p>DJ Dennis</p></article>
+      <article class="pk-slot"><time>09:00 – 12:00</time><h3>Voormiddag Show</h3><p>DJ Linda</p></article>
+      <article class="pk-slot"><time>12:00 – 15:00</time><h3>Middagmix</h3><p>DJ Patrick</p></article>
+      <article class="pk-slot"><time>15:00 – 18:00</time><h3>Drive Time</h3><p>DJ Mark</p></article>
+      <article class="pk-slot is-live"><span class="pk-pill pk-pill--live"><span class="pk-live-dot"></span> LIVE</span><time>18:00 – 22:00</time><h3>De Avondploeg</h3><p>DJ Nachtvlucht</p><div class="pk-vu pk-vu--slot"><span></span><span></span><span></span><span></span><span></span></div></article>
+      <article class="pk-slot"><time>22:00 – 02:00</time><h3>Nachtradio</h3><p>DJ Nachtvlucht</p></article>
+      <article class="pk-slot"><time>02:00 – 06:00</time><h3>Non Stop Hits</h3><p>DJ Nightbeat</p></article>
+    </div>
+  </section>
+</main>
+<div class="pk-player">
+  <div class="pk-player-inner">
+    <figure class="pk-player-art"><img src="piratenkrakers/assets/img/fallback-artwork.jpg" alt=""></figure>
+    <div class="pk-player-now">
+      <p class="pk-player-kicker"><span class="pk-live-dot"></span> LIVE</p>
+      <p class="pk-player-track"><strong>PiratenKrakers.nl</strong> — Live radio</p>
+      <p class="pk-player-sub">DJ Nachtvlucht — De Avondploeg</p>
+    </div>
+    <div class="pk-vu pk-vu--player"><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="pk-player-controls">
+      <button class="pk-play pk-play--sm" type="button"><span class="pk-play-icon"></span></button>
+      <p class="pk-player-listeners">142</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>
