@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="PiratenKrakers merkteken">
+  <title>PiratenKrakers</title>
+  <rect width="256" height="256" fill="#F4EEE4"/>
+  <path d="M48 150c18-70 62-104 80-110" fill="none" stroke="#3B9EFF" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 8"/>
+  <path d="M64 158c16-56 52-86 68-92" fill="none" stroke="#3B9EFF" stroke-width="4" stroke-linecap="round"/>
+  <path d="M40 168c40-8 90 4 128 48" fill="none" stroke="#3B9EFF" stroke-width="5" stroke-linecap="round"/>
+  <rect x="102" y="52" width="52" height="84" rx="26" fill="#1A2744"/>
+  <rect x="108" y="60" width="40" height="56" rx="20" fill="#1A2744"/>
+  <g fill="#F4EEE4" opacity=".35">
+    <circle cx="118" cy="78" r="2"/><circle cx="128" cy="78" r="2"/><circle cx="138" cy="78" r="2"/>
+    <circle cx="118" cy="90" r="2"/><circle cx="128" cy="90" r="2"/><circle cx="138" cy="90" r="2"/>
+    <circle cx="118" cy="102" r="2"/><circle cx="128" cy="102" r="2"/><circle cx="138" cy="102" r="2"/>
+  </g>
+  <rect x="96" y="124" width="64" height="16" rx="3" fill="#1A2744"/>
+  <path d="M88 132h10M158 132h10" stroke="#1A2744" stroke-width="5" stroke-linecap="round"/>
+  <path d="M128 140 v34" stroke="#1A2744" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="128" cy="186" r="8" fill="#1A2744"/>
+  <path d="M128 194 c-18 18 -8 28 0 28 s18-10 0-28" fill="none" stroke="#1A2744" stroke-width="5"/>
+</svg>

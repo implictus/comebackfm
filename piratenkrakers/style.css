@@ -1,0 +1,19 @@
+/*
+Theme Name: PiratenKrakers
+Theme URI: https://piratenkrakers.nl
+Author: PiratenKrakers
+Author URI: https://piratenkrakers.nl
+Description: Officieel custom WordPress-platform voor PiratenKrakers.nl — Nederlandse piratenradio. Inclusief losse radio-engine, live player, programmagids, DJ-profielen, verzoekjes en nieuws. Dit is geen generiek radiothema.
+Version: 1.3.2
+Requires at least: 6.4
+Tested up to: 6.8
+Requires PHP: 8.1
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: piratenkrakers
+Tags: radio, streaming, dark, custom-menu, featured-images, translation-ready
+
+PiratenKrakers.nl — Muziek uit het hart.
+*/
+
+/* Frontend styles live in assets/css/main.css and are enqueued by the theme. */
